@@ -71,6 +71,7 @@ class TrainingResults:
             Empty dict when not populated (e.g. results loaded from an older pickle)
         iteration_snapshots: Optional map ``iteration -> IterationSnapshot`` when
             ``fit(snapshot_iterations=...)`` was used. Empty when not requested.
+        network_parameters: Dictionary of all network parameters for artwarp run
     """
 
     categories: NDArray[np.float64]
@@ -83,6 +84,7 @@ class TrainingResults:
     training_time: float = 0.0
     category_parent_names: Dict[int, List[str]] = field(default_factory=dict)
     iteration_snapshots: Dict[int, IterationSnapshot] = field(default_factory=dict)
+    network_parameters: Dict[str, int | float | bool] = field(default_factory=dict)
 
     def get_category_sizes(self) -> Dict[int, int]:
         """Get the number of samples in each category."""
@@ -475,6 +477,21 @@ class ARTwarp:
                     category_parent_names[cat_int] = []
                 category_parent_names[cat_int].append(contour_names[i])
 
+        network_parameters = {
+            "vigilance": self.vigilance,
+            "learning_rate": self.learning_rate,
+            "bias": self.bias,
+            "max_categories": self.max_categories,
+            "max_iterations": self.max_iterations,
+            "warp_factor_level": self.warp_factor_level,
+            "random_seed": self._random_seed,
+            "randomize_sample_order": not self.randomize_sample_order,
+            "recat_single_categories": self.recat_single_categories,
+            "compare_warped": self.compare_warped,
+            "deprioritize_lone_category_search": self.deprioritize_lone_category_search,
+            "purge_empty_categories": self.purge_empty_categories,
+        }
+
         return TrainingResults(
             categories=categories,
             matches=matches,
@@ -486,6 +503,7 @@ class ARTwarp:
             training_time=training_time,
             category_parent_names=category_parent_names,
             iteration_snapshots=iteration_snapshots,
+            network_parameters=network_parameters,
         )
 
     def predict(

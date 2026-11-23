@@ -25,6 +25,7 @@ from artwarp.core.network import TrainingResults
 def export_results(
     results: TrainingResults,
     filepath: str,
+    data_parameters: Dict[str, bool | int | float],
     include_names: bool = True,
     contour_names: Optional[List[str]] = None,
 ) -> None:
@@ -54,6 +55,8 @@ def export_results(
         "iteration_history": results.iteration_history,
         "training_time": results.training_time,
         "category_parent_names": results.category_parent_names,
+        "network_parameters": results.network_parameters,
+        "data_parameters": data_parameters,
     }
 
     if include_names and contour_names is not None:

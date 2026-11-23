@@ -102,7 +102,15 @@ def command_train(args: argparse.Namespace) -> None:
     # save results
     if args.output:
         print(f"\nSaving results to: {args.output}")
-        export_results(results, args.output, contour_names=names)
+
+        data_parameters = {
+            "tempres": getattr(args, "tempres", 0.01),
+            "resample": need_tempres,
+            "sample_interval": getattr(args, "sample_interval", 0.01),
+            "max_contour_length": max_len,
+        }
+
+        export_results(results, args.output, contour_names=names, data_parameters=data_parameters)
 
     # export ref contours if requested
     if args.export_refs:
